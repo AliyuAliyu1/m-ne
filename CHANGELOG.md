@@ -4,14 +4,11 @@ All notable, unreleased changes to this project will be documented in this file.
 
 # 3.6.0 [Unreleased]
 
-### Other changes
-- Allow values of different attributes to share the same slug - #10138 by @IKarbowiak
 ### Breaking changes
 - Add synchronous tax calculation via webhooks - #9526 by @fowczarek, @mateuszgrzyb, @stnatic
   - Change return type from `CheckoutTaxedPricesData` to `TaxedMoney` in plugin manager methods:
     - `calculate_checkout_line_total`
     - `calculate_checkout_line_unit_price`
-  -
 
 ### GraphQL API
 - Add synchronous tax calculation via webhooks - #9526 by @fowczarek, @mateuszgrzyb, @stnatic
@@ -24,6 +21,7 @@ All notable, unreleased changes to this project will be documented in this file.
     - `get_taxes_for_order`
 
 ### Other changes
+- Allow values of different attributes to share the same slug - #10138 by @IKarbowiak
 - Add synchronous tax calculation via webhooks - #9526 by @fowczarek, @mateuszgrzyb, @stnatic
   - Add option to calculate taxes via webhooks more info in docs
   <!-- We should put docs link here before release -->

@@ -21,44 +21,12 @@ if TYPE_CHECKING:
     from .fetch import ShippingMethodInfo
 
 
-def _calculate_base_line_unit_price(
-    line_info: "CheckoutLineInfo",
-    channel: "Channel",
-    discounts: Optional[Iterable[DiscountInfo]] = None,
-    include_voucher=True,
-) -> Money:
-    """Calculate base line unit price without voucher applied once per order."""
-    variant = line_info.variant
-    variant_price = variant.get_price(
-        line_info.product,
-        line_info.collections,
-        channel,
-        line_info.channel_listing,
-        discounts or [],
-        line_info.line.price_override,
-    )
-
-    if not include_voucher:
-        return quantize_price(variant_price, variant_price.currency)
-
-    if line_info.voucher and not line_info.voucher.apply_once_per_order:
-        unit_price = max(
-            variant_price
-            - line_info.voucher.get_discount_amount_for(variant_price, channel=channel),
-            zero_money(variant_price.currency),
-        )
-    else:
-        unit_price = variant_price
-
-    return quantize_price(unit_price, unit_price.currency)
-
-
 def calculate_base_line_unit_price(
     line_info: "CheckoutLineInfo",
     channel: "Channel",
     discounts: Optional[Iterable[DiscountInfo]] = None,
 ) -> Money:
-    """Calculate line unit prices including discounts and vouchers."""
+    """Calculate line unit price including discounts and vouchers."""
     prices_data = calculate_base_line_total_price(
         line_info=line_info, channel=channel, discounts=discounts
     )
@@ -67,22 +35,12 @@ def calculate_base_line_unit_price(
     return quantize_price(prices_data / quantity, currency)
 
 
-def calculate_undiscounted_base_line_unit_price(
-    line_info: "CheckoutLineInfo",
-    channel: "Channel",
-) -> Money:
-    """Calculate line unit prices excluding discounts and vouchers."""
-    return _calculate_base_line_unit_price(
-        line_info=line_info, channel=channel, discounts=[], include_voucher=False
-    )
-
-
 def calculate_base_line_total_price(
     line_info: "CheckoutLineInfo",
     channel: "Channel",
     discounts: Optional[Iterable[DiscountInfo]] = None,
 ) -> Money:
-    """Calculate line total prices including discounts and vouchers."""
+    """Calculate line total price without including discounts and vouchers."""
     unit_price = _calculate_base_line_unit_price(
         line_info=line_info, channel=channel, discounts=discounts
     )
@@ -104,16 +62,71 @@ def calculate_base_line_total_price(
     return quantize_price(total_price, total_price.currency)
 
 
+def _calculate_base_line_unit_price(
+    line_info: "CheckoutLineInfo",
+    channel: "Channel",
+    discounts: Optional[Iterable[DiscountInfo]] = None,
+) -> Money:
+    """Calculate base line unit price including discounts and vouchers."""
+    variant = line_info.variant
+    variant_price = variant.get_price(
+        line_info.product,
+        line_info.collections,
+        channel,
+        line_info.channel_listing,
+        discounts or [],
+        line_info.line.price_override,
+    )
+
+    if line_info.voucher and not line_info.voucher.apply_once_per_order:
+        unit_price = max(
+            variant_price
+            - line_info.voucher.get_discount_amount_for(variant_price, channel=channel),
+            zero_money(variant_price.currency),
+        )
+    else:
+        unit_price = variant_price
+
+    return quantize_price(unit_price, unit_price.currency)
+
+
 def calculate_undiscounted_base_line_total_price(
     line_info: "CheckoutLineInfo",
     channel: "Channel",
 ) -> Money:
-    """Calculate line total prices excluding discounts and vouchers."""
-    unit_price = _calculate_base_line_unit_price(
-        line_info=line_info, channel=channel, discounts=[], include_voucher=False
+    """Calculate line total price excluding discounts and vouchers."""
+    unit_price = _calculate_undiscounted_base_line_unit_price(
+        line_info=line_info, channel=channel
     )
     total_price = unit_price * line_info.line.quantity
     return quantize_price(total_price, total_price.currency)
+
+
+def calculate_undiscounted_base_line_unit_price(
+    line_info: "CheckoutLineInfo",
+    channel: "Channel",
+) -> Money:
+    """Calculate line unit price without including discounts and vouchers."""
+    return _calculate_undiscounted_base_line_unit_price(
+        line_info=line_info, channel=channel
+    )
+
+
+def _calculate_undiscounted_base_line_unit_price(
+    line_info: "CheckoutLineInfo",
+    channel: "Channel",
+):
+    """Calculate line unit price without including discounts and vouchers."""
+    variant = line_info.variant
+    variant_price = variant.get_price(
+        line_info.product,
+        line_info.collections,
+        channel,
+        line_info.channel_listing,
+        [],
+        line_info.line.price_override,
+    )
+    return quantize_price(variant_price, variant_price.currency)
 
 
 def base_checkout_delivery_price(

@@ -46,9 +46,6 @@ def test_apply_tax_data(checkout_with_items, checkout_lines, tax_data):
     checkout = checkout_with_items
     lines = checkout_lines
 
-    def qp(amount):
-        return quantize_price(amount, checkout.currency)
-
     # when
     _apply_tax_data_from_app(
         checkout,
@@ -61,16 +58,18 @@ def test_apply_tax_data(checkout_with_items, checkout_lines, tax_data):
 
     # then
     assert str(checkout.shipping_price.net.amount) == str(
-        qp(tax_data.shipping_price_net_amount)
+        quantize_price(tax_data.shipping_price_net_amount, checkout.currency)
     )
     assert str(checkout.shipping_price.gross.amount) == str(
-        qp(tax_data.shipping_price_gross_amount)
+        quantize_price(tax_data.shipping_price_gross_amount, checkout.currency)
     )
 
     for line, tax_line in zip(lines, tax_data.lines):
-        assert str(line.total_price.net.amount) == str(qp(tax_line.total_net_amount))
+        assert str(line.total_price.net.amount) == str(
+            quantize_price(tax_line.total_net_amount, checkout.currency)
+        )
         assert str(line.total_price.gross.amount) == str(
-            qp(tax_line.total_gross_amount)
+            quantize_price(tax_line.total_gross_amount, checkout.currency)
         )
 
 
