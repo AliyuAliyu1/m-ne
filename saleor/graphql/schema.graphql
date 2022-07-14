@@ -1585,7 +1585,23 @@ enum WebhookEventTypeEnum {
   PAYMENT_PROCESS
   PAYMENT_REFUND
   PAYMENT_VOID
+
+  """
+  Event called for checkout tax calculation.
+  
+  Added in Saleor 3.6.
+  
+  Note: this API is currently in Feature Preview and can be subject to changes at later point.
+  """
   CHECKOUT_CALCULATE_TAXES
+
+  """
+  Event called for order tax calculation.
+  
+  Added in Saleor 3.6.
+  
+  Note: this API is currently in Feature Preview and can be subject to changes at later point.
+  """
   ORDER_CALCULATE_TAXES
   SHIPPING_LIST_METHODS_FOR_CHECKOUT
   ORDER_FILTER_SHIPPING_METHODS
@@ -1610,7 +1626,23 @@ enum WebhookEventTypeSyncEnum {
   PAYMENT_PROCESS
   PAYMENT_REFUND
   PAYMENT_VOID
+
+  """
+  Event called for checkout tax calculation.
+  
+  Added in Saleor 3.6.
+  
+  Note: this API is currently in Feature Preview and can be subject to changes at later point.
+  """
   CHECKOUT_CALCULATE_TAXES
+
+  """
+  Event called for order tax calculation.
+  
+  Added in Saleor 3.6.
+  
+  Note: this API is currently in Feature Preview and can be subject to changes at later point.
+  """
   ORDER_CALCULATE_TAXES
   SHIPPING_LIST_METHODS_FOR_CHECKOUT
   ORDER_FILTER_SHIPPING_METHODS

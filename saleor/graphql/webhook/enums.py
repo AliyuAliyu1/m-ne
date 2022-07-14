@@ -1,6 +1,7 @@
 import graphene
 
 from ...webhook.event_types import WebhookEventAsyncType, WebhookEventSyncType
+from ..core.descriptions import ADDED_IN_36, PREVIEW_FEATURE
 from ..core.utils import str_to_enum
 
 checkout_updated_event_enum_description = (
@@ -102,6 +103,12 @@ WEBHOOK_EVENT_DESCRIPTION = {
     WebhookEventAsyncType.VOUCHER_DELETED: "A voucher is deleted.",
     WebhookEventAsyncType.ANY: "All the events.",
     WebhookEventAsyncType.OBSERVABILITY: "An observability event is created.",
+    WebhookEventSyncType.CHECKOUT_CALCULATE_TAXES: (
+        "Event called for checkout tax calculation." + ADDED_IN_36 + PREVIEW_FEATURE
+    ),
+    WebhookEventSyncType.ORDER_CALCULATE_TAXES: (
+        "Event called for order tax calculation." + ADDED_IN_36 + PREVIEW_FEATURE
+    ),
 }
 
 
